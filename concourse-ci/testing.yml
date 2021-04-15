@@ -1,0 +1,38 @@
+---
+resources:
+- name: my-image
+  type: registry-image
+  source:
+    repository: busybox
+    tag: 1.33.0
+
+- name: master
+  type: git
+  icon: gitlab
+  source:
+    uri: https://github.com/ahemish/testing.git
+    branch: main
+    username: ahemish
+    password: ((git-password))
+
+
+jobs:
+- name: job
+  plan:
+  - get: my-image
+  - get: master
+    trigger: true
+  - task: simple-task
+    image: my-image
+    config:
+      platform: linux
+      input: master
+      run:
+        path: echo
+        args:
+        - -exc
+        - |
+          ls -la
+          cd master
+          ls -l
+        
